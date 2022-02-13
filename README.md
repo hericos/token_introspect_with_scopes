@@ -56,14 +56,15 @@ Run APICast with this custom policy
 docker run --name apicast -d --rm -p 80:8080 -v $(pwd)/config.json:/opt/app/config.json:ro -e THREESCALE_CONFIG_FILE=/opt/app/config.json 
 -v $(pwd)/token_introspection_with_scopes/:/opt/app-root/src/src/apicast/policy/token_introspection_with_scopes/ quay.io/3scale/apicast:master
 ```
-
+Modify your /etc/hosts with the url of your apicast and 127.0.0.1
+          
 Test the API
 ```
-curl -H "Authorization: Bearer $TOKEN" "http://api.staging.herico.com:80/herico?user_key=9caa21018e0aa9c96786ae4fff88169d"
+curl -H "Authorization: Bearer $TOKEN" "http://apicast.acme.com:80/herico?user_key=9caa21018e0aa9c96786ae4fff88169d"
 ```
 Its works because the path "/herico" is not a "protected_uris" in config.json file
 ```
-curl -H "Authorization: Bearer $TOKEN" "http://api.staging.herico.com:80/apple?user_key=9caa21018e0aa9c96786ae4fff88169d"
+curl -H "Authorization: Bearer $TOKEN" "http://apicast.acme.com:80/apple?user_key=9caa21018e0aa9c96786ae4fff88169d"
 ```
 Its not works because my Token was creates without the scope fruits ("scope" in config.json file)
 
@@ -75,7 +76,7 @@ curl -X POST --basic -u $CLIENTID:$CLIENTSECRET -H "Content-Type: application/x-
 -d "grant_type=password&username=$USERNAME&password=$PASSWORD&scope=$SCOPE" $TOKEN_EP
 export TOKEN=9d799e49-4a53-390d-ba25-96e2d0027cc2
 
-curl -H "Authorization: Bearer $TOKEN" "http://api.staging.herico.com:80/apple?user_key=9caa21018e0aa9c96786ae4fff88169d"
+curl -H "Authorization: Bearer $TOKEN" "http://apicast.acme.com:80/apple?user_key=9caa21018e0aa9c96786ae4fff88169d"
 ```
 Its Works!
 
