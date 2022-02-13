@@ -1,4 +1,32 @@
+# APIcast Custom Policy
+# Token Introspection with Scopes
+
+This policy was customized from the official Token Introspection Policy
+
+
 # How to use
+You need create a config.json from your 3Scale. The configuration can be downloaded from the 3scale admin portal using the URL: <schema>://<admin-portal-domain>/admin/api/nginx/spec.json (Example: https://account-admin.3scale.net/admin/api/nginx/spec.json).
+
+after this, edit your "policy_chain" including the new custom policy, before the "apicast" policy
+
+```
+          {
+            "name": "token_introspection_with_scopes",
+            "version": "builtin",
+            "configuration": {
+              "auth_type": "client_id+client_secret",
+              "max_cached_tokens": 0,
+              "max_ttl_tokens": 60,
+              "introspection_url": "https://192.168.0.18:9443/oauth2/introspect",
+              "client_id": "admin",
+              "client_secret": "admin",
+              "protected_uris": "/apple /orange /pear /banana",
+              "scope": "fruits"
+            }
+          },
+```
+
+
 Run a oauth2 server
 ```
 $ docker run -it -d -p 9443:9443 wso2/wso2is
