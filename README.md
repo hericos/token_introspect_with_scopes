@@ -8,9 +8,7 @@ This policy was customized from the official Token Introspection Policy
 You need create a config.json from your 3Scale. The configuration can be downloaded from the 3scale admin portal using the URL: <schema>://<admin-portal-domain>/admin/api/nginx/spec.json (Example: https://account-admin.3scale.net/admin/api/nginx/spec.json).
 
 after this, edit your "policy_chain" including the new custom policy, before the "apicast" policy
-using your IP in "introspect_url"
-### Todo
-- [ ] create a docker-compose
+ps.: Edit the field "introspect_url" with your local ip (i will create a docker-compose in the future, sorry)
 
 ```
           {
@@ -20,7 +18,7 @@ using your IP in "introspect_url"
               "auth_type": "client_id+client_secret",
               "max_cached_tokens": 0,
               "max_ttl_tokens": 60,
-              "introspection_url": "https://(your ip):9443/oauth2/introspect",
+              "introspection_url": "https://(your local ip):9443/oauth2/introspect",
               "client_id": "admin",
               "client_secret": "admin",
               "protected_uris": "/apple /orange /pear /banana",
