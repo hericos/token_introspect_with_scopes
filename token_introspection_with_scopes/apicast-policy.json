@@ -3,7 +3,7 @@
   "name": "OAuth 2.0 Token Introspection with Scopes",
   "summary": "Configures OAuth 2.0 Token Introspection with scopes validation by path",
   "description": "This policy executes OAuth 2.0 Token Introspection only in selected paths and validate scope",
-  "version": "builtin",
+  "version": "0.2",
   "configuration": {
     "type": "object",
     "properties": {
@@ -65,7 +65,7 @@
             }
           },
           "required": [
-            "client_id", "client_secret", "introspection_url, protected_uris, scope"
+            "client_id", "client_secret", "introspection_url", "protected_uris", "scope"
           ]
         }]
       }
