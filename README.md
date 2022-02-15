@@ -13,7 +13,7 @@ ps.: Edit the field "introspect_url" with your local ip (i will create a docker-
 ```
           {
             "name": "token_introspection_with_scopes",
-            "version": "builtin",
+            "version": "0.2",
             "configuration": {
               "auth_type": "client_id+client_secret",
               "max_cached_tokens": 0,
