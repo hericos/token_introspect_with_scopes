@@ -68,7 +68,7 @@
                 }
               },
               "required": [
-                "client_id", "client_secret", "introspection_url, protected_uris, scope"
+                "client_id", "client_secret", "introspection_url", "protected_uris", "scope"
               ]
             }]
           }
