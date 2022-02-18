@@ -1,9 +1,9 @@
 {
   "name": "OAuth 2.0 Token Introspection with Scopes",
-  "version": "0.2",
+  "version": "0.3",
   "schema" : {
     "name": "OAuth 2.0 Token Introspection with Scopes",
-    "version": "0.2",
+    "version": "0.3",
     "$schema": "http://apicast.io/poolicy-v1/schema#manifest#",
     "summary": "Configures OAuth 2.0 Token Introspection with scopes validation by path",
     "description": "This policy executes OAuth 2.0 Token Introspection only in selected paths and validate scope",
@@ -58,17 +58,30 @@
                   "description": "Introspection Endpoint URL",
                   "type": "string"
                 },
-                "protected_uris": {
-                  "description": "URI to protect",
-                  "type": "string"
-                },
-                "scope": {
-                  "description": "scope to grant access",
-                  "type": "string"
+                "scopes": {
+                  "items": {
+                  "properties": {
+                    "protected_uris": {
+                      "description": "URI to protect",
+                      "type": "string"
+                    },
+                    "scope": {
+                      "description": "scope to grant access",
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "scope",
+                    "protected_uris"
+                  ],
+                  "type": "object"
+                  },
+                  "description": "List of rules to be applied",
+                  "type": "array"
                 }
               },
               "required": [
-                "client_id", "client_secret", "introspection_url", "protected_uris", "scope"
+                "client_id", "client_secret", "introspection_url"
               ]
             }]
           }
