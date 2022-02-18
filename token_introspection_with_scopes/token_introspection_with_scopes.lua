@@ -51,6 +51,20 @@ function _M.new(config)
     self.tokens_cache = noop_cache
   end
 
+  --Split paths--
+  local security = {}
+  for k=1, #self.config.scopes do
+    for s in string.gmatch(self.config.scopes[k].protected_uris, "[^,]+") do
+      if security[s] == nil then
+        security[s]=self.config.scopes[k].scope
+      else
+        security[s]=security[s] .. "," .. self.config.scopes[k].scope
+      end
+    end
+  end
+  self.security = security
+  --Security has all the protected paths
+
   return self
 end
 
@@ -84,6 +98,22 @@ local function introspect_token(self, token)
   end
 end
 
+local function split(str, character)
+  result = {}
+  for s in string.gmatch(str, "[^"..character.."]+") do
+      table.insert(result, s)
+  end
+  return result
+end
+
+local function erasepath(path)
+  if path:match('(.*)/$') then 
+    return path:match('(.*)/$')
+  else 
+    return path 
+  end
+end
+
 function _M:access(context)
   if self.auth_type == "use_3scale_oidc_issuer_endpoint" then
     if not context.proxy.oauth then
@@ -95,9 +125,17 @@ function _M:access(context)
     self.credential = create_credential(components.user, components.password)
     self.introspection_url = context.proxy.oauth.config.token_introspection_endpoint
   end
-  local uri_path = ngx.var.uri
-  if string.find(self.config.protected_uris, uri_path) then
+
+  local uri_path = erasepath(ngx.var.uri)
+
+  scope_needed={}
+  if self.security[uri_path] ~= nil then
+    scope_needed=split(self.security[uri_path], ",")
+  end
+  
+  if #scope_needed > 0 then
     if self.introspection_url then
+      local authorized = false
       local authorization = http_authorization.new(ngx.var.http_authorization)
       local access_token = authorization.token
       --- Introspection Response must have an "active" boolean value.
@@ -108,11 +146,29 @@ function _M:access(context)
         ngx.status = context.service.auth_failed_status
         ngx.say(context.service.error_auth_failed)
         return ngx.exit(ngx.status)
-      elseif not string.find(self.config.scope, token_info.scope) then
-        ngx.log(ngx.INFO, 'scope in token introspection ', token_info.scope, ': not authorized')
-        ngx.status = context.service.auth_failed_status
-        ngx.say(context.service.error_auth_failed)
-        return ngx.exit(ngx.status)
+      else
+        token_scopes=split(token_info.scope, " ")
+        if #token_scopes > 0 then  
+          for i=1, #token_scopes do
+            for h=1, #scope_needed do
+              if token_scopes[i] == scope_needed[h] then
+                authorized = true
+                break
+              end
+            end
+          end
+          if not authorized then
+            ngx.log(ngx.INFO, 'token introspection for access token ', access_token, ': dont have the scope needed')
+            ngx.status = context.service.auth_failed_status
+            ngx.say(context.service.error_auth_failed)
+            return ngx.exit(ngx.status)
+          end
+        else  
+          ngx.log(ngx.INFO, 'token without scopes')
+          ngx.status = context.service.auth_failed_status
+          ngx.say(context.service.error_auth_failed)
+          return ngx.exit(ngx.status)
+        end
       end
     end
   end
