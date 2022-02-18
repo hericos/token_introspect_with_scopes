@@ -13,6 +13,10 @@ $ curl -v -X POST -u ":{3SCALE_ACCESS_TOKEN}" -H "Content-Type: application/json
     https://{ADMIN_PORTAL}/admin/api/registry/policies.json
 ```
 
+Add the custom policy in your policy chain and configure as below:
+![Config](config.png)
+
+
 Run a oauth2 server
 ```
 $ docker run -it -d -p 9443:9443 wso2/wso2is
